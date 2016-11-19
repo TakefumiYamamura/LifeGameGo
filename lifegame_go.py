@@ -261,47 +261,47 @@ class LifegameGo:
 			print "#Winner: %s" % self.names[0 if p1 > p2 else 1]
 		else:
 			print "#Draw"
-	def main(args):
-		if len(args) < 5:
-			print >>sys.stderr, "Usage: %s name1 command1 name2 command2 [nsteps=3] [R=10] [C=10] [target=dominant] [wait_time=1000]" % os.path.basename(args[0])
-			print >>sys.stderr, " name1 : first player's name"
-			print >>sys.stderr, " command1 : first player's command"
-			print >>sys.stderr, " name2 : second player's name"
-			print >>sys.stderr, " command2 : second player's command"
-			print >>sys.stderr, " nsteps : number of steps for the cellular automaton [default: 3]"
-			print >>sys.stderr, " R : number of rows (y-axis) [default: 10]"
-			print >>sys.stderr, " C : number of columns (x-asis) [default: 10]"
-			print >>sys.stderr, " target : type of the result: player, dominant, count, novis [default: dominant]"
-			print >>sys.stderr, " player : for 2-players' cells alive"
-			print >>sys.stderr, " dominant : for 2-players' dominant cells"
-			print >>sys.stderr, " count : for number of 2-players' cells"
-			print >>sys.stderr, " novis : No curses"
-			print >>sys.stderr, " wait_time: wait time for curses (milli-seconds) [default: 1000]"
-			sys.exit(1)
-		signal.signal(signal.SIGINT, signal_handler)
-		player_data = [(name, command) for name, command in zip(args[1:4:2], args[2:5:2])]
-		nsteps = int(args[5]) if len(args) > 5 else 3
-		R = int(args[6]) if len(args) > 6 else 10
-		C = int(args[7]) if len(args) > 7 else 10
-		# targets: "player", "dominant", "count", "novis"
-		target = args[8].lower() if len(args) > 8 else "dominant"
-		visible = False if target == "novis" else True
-		wait_time = int(args[9]) if len(args) > 9 else 1000
-		if target not in ("player", "dominant", "count", "novis"):
-			print >>sys.stderr, "Error: unknown target: %s" % target
-			sys.exit(1)
-		print "nsteps=%d, R=%d, C=%d, target=%s" % (nsteps, R, C, target)
-		lg = LifegameGo(player_data, R, C, visible, wait_time)
-		winner, msg = lg.initialize()
-		if winner:
-			print msg
-			print "#Winner: %s" % winner
-		else:
+def main(args):
+	if len(args) < 5:
+		print >>sys.stderr, "Usage: %s name1 command1 name2 command2 [nsteps=3] [R=10] [C=10] [target=dominant] [wait_time=1000]" % os.path.basename(args[0])
+		print >>sys.stderr, " name1 : first player's name"
+		print >>sys.stderr, " command1 : first player's command"
+		print >>sys.stderr, " name2 : second player's name"
+		print >>sys.stderr, " command2 : second player's command"
+		print >>sys.stderr, " nsteps : number of steps for the cellular automaton [default: 3]"
+		print >>sys.stderr, " R : number of rows (y-axis) [default: 10]"
+		print >>sys.stderr, " C : number of columns (x-asis) [default: 10]"
+		print >>sys.stderr, " target : type of the result: player, dominant, count, novis [default: dominant]"
+		print >>sys.stderr, " player : for 2-players' cells alive"
+		print >>sys.stderr, " dominant : for 2-players' dominant cells"
+		print >>sys.stderr, " count : for number of 2-players' cells"
+		print >>sys.stderr, " novis : No curses"
+		print >>sys.stderr, " wait_time: wait time for curses (milli-seconds) [default: 1000]"
+		sys.exit(1)
+	signal.signal(signal.SIGINT, signal_handler)
+	player_data = [(name, command) for name, command in zip(args[1:4:2], args[2:5:2])]
+	nsteps = int(args[5]) if len(args) > 5 else 3
+	R = int(args[6]) if len(args) > 6 else 10
+	C = int(args[7]) if len(args) > 7 else 10
+	# targets: "player", "dominant", "count", "novis"
+	target = args[8].lower() if len(args) > 8 else "dominant"
+	visible = False if target == "novis" else True
+	wait_time = int(args[9]) if len(args) > 9 else 1000
+	if target not in ("player", "dominant", "count", "novis"):
+		print >>sys.stderr, "Error: unknown target: %s" % target
+		sys.exit(1)
+	print "nsteps=%d, R=%d, C=%d, target=%s" % (nsteps, R, C, target)
+	lg = LifegameGo(player_data, R, C, visible, wait_time)
+	winner, msg = lg.initialize()
+	if winner:
+		print msg
+		print "#Winner: %s" % winner
+	else:
+		lg.show(target)
+		for i in range(nsteps):
+			lg.next()
 			lg.show(target)
-			for i in range(nsteps):
-				lg.next()
-				lg.show(target)
-			lg.pause()
-			lg.finish()
-			lg.result()
+		lg.pause()
+		lg.finish()
+		lg.result()
 if __name__ == "__main__": main(sys.argv)
